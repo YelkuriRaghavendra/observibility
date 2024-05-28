@@ -46,11 +46,6 @@ jobs:
         run: |
           aws s3 cp s3://s3-bucket-890/hello-anu.pem .
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ./hello-anu.pem
-
       - name: Connect to EC2 instance
         env:
           ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
@@ -59,5 +54,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          ssh -i ./hello-anu.pem ec2-user@34.230.30.62 "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && aws configure set region $AWS_REGION && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 173939030599.dkr.ecr.us-east-1.amazonaws.com && docker run --name observability-visibility -p 8501:8501 $ECR_REGISTRY/$ECR_REPOSITORY:latest"
-        
+          ssh -o StrictHostKeyChecking=no -i ./hello-anu.pem ec2-user@34.230.30.62  '
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region $AWS_REGION
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 173939030599.dkr.ecr.us-east-1.amazonaws.com
+          docker run --name observability-visibility -p 8501:8501 $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          '
