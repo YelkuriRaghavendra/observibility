@@ -54,6 +54,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
+          chmod 600 ./hello-anu.pem
           ssh -o StrictHostKeyChecking=no -i ./hello-anu.pem ec2-user@34.230.30.62  '
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
