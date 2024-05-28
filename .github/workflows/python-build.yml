@@ -40,7 +40,7 @@ jobs:
         COMMIT_SHA: ${{ github.sha }}
 
       run: |
-        IMAGE_TAG=$(echo $COMMIT_SHA | cut -c 0-6) 
+        IMAGE_TAG=$(echo $COMMIT_SHA | cut -c 1-7) 
         # Build the Docker image
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
         
