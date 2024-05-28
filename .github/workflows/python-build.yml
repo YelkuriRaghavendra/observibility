@@ -37,8 +37,10 @@ jobs:
       env:
         ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-        IMAGE_TAG: latest
+
       run: |
+        commit_sha=${ github.sha }
+        IMAGE_TAG=${GITHUB_SHA::6} 
         # Build the Docker image
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
         
@@ -47,3 +49,7 @@ jobs:
         
         # Push the Docker image to ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Deploy to EC2
+      run: |
+        ssh -i /path/to/your/private-key.pem ec2-user@your-ec2-instance-ip "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && docker run -d -p host-port:container-port $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
