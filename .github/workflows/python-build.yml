@@ -1,38 +1,68 @@
-name: Build, Test, and Push Docker Image
+name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main ]  # Update branches to trigger on
+    branches:
+      - main
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest  # Consider using a runner with Docker pre-installed
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  # Checkout code
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Login to AWS ECR
-        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 1739-3903-0599.dkr.ecr.us-east-1.amazonaws.com
-    
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
 
-      - name: Install Python
-        uses: actions/setup-python@v4  # Improved action for Python setup
-        with:
-          python-version: '3.8'  # Adjust Python version as needed
+    - name: Install AWS CLI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y awscli
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+    - name: Print AWS credentials (for debugging)
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+        echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+        echo "AWS_REGION=${AWS_REGION}"
+        echo "AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID}"
 
-      - name: Build Docker image
-        run: docker build -t 1739-3903-0599.dkr.ecr.us-east-1.amazonaws.com/demo .
+    - name: Configure AWS credentials
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+      run: |
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set region $AWS_REGION
 
-      - name: Tag Docker image
-        run: docker tag 1739-3903-0599.dkr.ecr.us-east-1.amazonaws.com/demo latest:demo
+    - name: Log in to Amazon ECR
+      env:
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      run: |
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
-      - name: Push Docker image to ECR
-        run: docker push 1739-3903-0599.dkr.ecr.us-east-1.amazonaws.com/demo:demo
-
-      - name: Run tests (optional)  # Add your testing commands here
-        run: |
-          # Replace with your test commands (e.g., pytest, unittest)
-          python tests.py
+    - name: Build, tag, and push Docker image
+      env:
+        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        IMAGE_TAG: latest
+      run: |
+        # Build the Docker image
+        docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+        
+        # Tag the Docker image
+        docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
+        # Push the Docker image to ECR
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
