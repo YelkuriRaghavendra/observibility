@@ -49,7 +49,3 @@ jobs:
         
         # Push the Docker image to ECR
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-    - name: Deploy to EC2
-      run: |
-        ssh -i /path/to/your/private-key.pem ec2-user@your-ec2-instance-ip "docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG && docker run -d -p host-port:container-port $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
