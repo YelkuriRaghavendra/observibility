@@ -10,34 +10,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push Docker image
-      env:
-        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
-        COMMIT_SHA: ${{ github.sha }}
+      - name: Build, tag, and push Docker image
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          COMMIT_SHA: ${{ github.sha }}
 
-      run: |
-        IMAGE_TAG=$(echo $COMMIT_SHA | cut -c 1-7) 
-        # Build the Docker image
-        docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+        run: |
+          IMAGE_TAG=$(echo $COMMIT_SHA | cut -c 1-7) 
+          # Build the Docker image
+          docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
+          
+          # Tag the Docker image
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # Push the Docker image to ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Download PEM file from S3
+        run: |
+          aws s3 cp s3://s3-bucket-890/hello-anu.pem .
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ./hello-anu.pem
+
+      - name: Connect to EC2 instance
+        env:
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          ssh -i ./hello-anu.pem ec2-user@34.230.30.62 "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && aws configure set region $AWS_REGION && aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 173939030599.dkr.ecr.us-east-1.amazonaws.com && docker run --name observability-visibility -p 8501:8501 $ECR_REGISTRY/$ECR_REPOSITORY:latest"
         
-        # Tag the Docker image
-        docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker tag $ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-        # Push the Docker image to ECR
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
