@@ -56,6 +56,7 @@ jobs:
         run: |
           chmod 600 ./hello-anu.pem
           ssh -o StrictHostKeyChecking=no -i ./hello-anu.pem ec2-user@ec2-34-230-30-62.compute-1.amazonaws.com  "
+          sudo su
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 173939030599.dkr.ecr.us-east-1.amazonaws.com
           docker run --name observability-visibility -p 8501:8501 $ECR_REGISTRY/$ECR_REPOSITORY:latest
           "
