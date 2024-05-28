@@ -37,10 +37,10 @@ jobs:
       env:
         ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        COMMIT_SHA: ${{ github.sha }}
 
       run: |
-        commit_sha=${ github.sha }
-        IMAGE_TAG=${GITHUB_SHA::6} 
+        IMAGE_TAG=$(echo $COMMIT_SHA | cut -c 0-6) 
         # Build the Docker image
         docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
         
