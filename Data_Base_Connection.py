@@ -1,15 +1,14 @@
 import psycopg2
 from psycopg2 import sql
 import pandas as pd
-from config import DB_HOST, DB_NAME, DB_USER, DB_PASSWORD, DB_PORT
+from config import DB_HOST, DB_USER, DB_PASSWORD
 
 def get_connection():
     conn = psycopg2.connect(
-        dbname=DB_NAME,
         user=DB_USER,
         password=DB_PASSWORD,
         host=DB_HOST,
-        port=DB_PORT
+        port=5432
     )
     return conn
 
