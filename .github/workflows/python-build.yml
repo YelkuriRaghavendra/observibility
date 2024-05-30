@@ -58,6 +58,9 @@ jobs:
           USER: ${{ secrets.EC2_USER }}
           HOST: ${{ secrets.EC2_HOST }}
           PEM: ${{ secrets.PEM_FILE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD}}
         run: |
           chmod 600 ./$PEM 
           ssh -o StrictHostKeyChecking=no -i ./hello-anu.pem $USER@$HOST  "
