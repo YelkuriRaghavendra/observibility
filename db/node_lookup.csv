@@ -1,0 +1,7 @@
+"node_id","business_unit","country_code","node_code","node_type","node_name","created_at","last_updated_at"
+"2cfa70e2-61d1-4188-97b2-d805f7a81e3c",PARIS,CL,"3001",SELLER,nodetest1,2024-05-24 15:59:13.787 +0530,
+"1fba075f-db3e-4355-9725-d491289d104c",PARIS,CL,"3008",SELLER,nodetest2,2024-05-24 17:36:56.331 +0530,
+"4d2b91b1-da25-4670-a3b0-ff1e52e0c66a",PARIS,CL,"2000",SELLER,NODE_TEST_2,2024-05-27 17:30:53.138 +0530,
+ed46be48-4aee-4912-9fb2-f4d3d21161fa,PARIS,CL,"2216",STORE,thinkpad,2024-05-28 11:24:51.194 +0530,
+"9baaf8d6-0994-4f0a-b9c6-0c90257e0737",PARIS,CL,"2215",_3PL,ajio,2024-05-28 23:55:04.111 +0530,
+"81906d2a-93c5-44ba-a610-5cac512d7c63",PARIS,CL,"1001",SELLER,NODE_TEST_2,2024-05-29 18:05:17.525 +0530,

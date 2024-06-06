@@ -1,0 +1,18 @@
+"installed_rank","version","description","type","script","checksum","installed_by","installed_on","execution_time","success"
+0,,<< Flyway Schema Creation >>,SCHEMA,"""paris_cl""",,giv_inventory_service,2024-03-27 11:21:50.437,0,true
+1,"20240222143542",create supply activity item log table,SQL,V20240222143542__create_supply_activity_item_log_table.sql,-1375472511,giv_inventory_service,2024-03-27 11:21:50.521,47,true
+2,"20240301183303",create supply activity item ignored log table,SQL,V20240301183303__create_supply_activity_item_ignored_log_table.sql,2030516297,giv_inventory_service,2024-03-27 11:21:50.620,9,true
+3,"20240306115717",create supply summary unique constraint,SQL,V20240306115717__create_supply_summary_unique_constraint.sql,696578834,giv_inventory_service,2024-03-27 11:21:50.659,12,true
+4,"20240315185557",remove column adjustment type,SQL,V20240315185557__remove_column_adjustment_type.sql,-1674305521,giv_inventory_service,2024-03-27 11:21:50.701,6,true
+5,"20240318182503",create supply activity item error log table,SQL,V20240318182503__create_supply_activity_item_error_log_table.sql,1105033559,giv_inventory_service,2024-03-27 11:21:50.727,9,true
+6,"20240329130113",create supply activity log table,SQL,V20240329130113__create_supply_activity_log_table.sql,142778115,giv_inventory_service,2024-03-29 09:20:00.256,30,true
+7,"20240329183107",add column business unit and country code supply activity log table,SQL,V20240329183107__add_column_business_unit_and_country_code_supply_activity_log_table.sql,1396628032,giv_inventory_service,2024-04-01 06:37:13.141,30,true
+8,"20240401151101",create supply node full sync summary table,SQL,V20240401151101__create_supply_node_full_sync_summary_table.sql,-1163127275,giv_inventory_service,2024-04-01 13:06:14.168,62,true
+9,"20240401151200",create supply node full sync mismatch log table,SQL,V20240401151200__create_supply_node_full_sync_mismatch_log_table.sql,1201529630,giv_inventory_service,2024-04-01 13:06:14.322,15,true
+10,"20240401185713",add column file name and reason supply node full sync summary,SQL,V20240401185713__add_column_file_name_and_reason_supply_node_full_sync_summary.sql,1348265855,giv_inventory_service,2024-04-11 07:42:34.840,54,true
+11,"20240405145244",add column previous quantity unit of measure and updated quantity unit of measure alter previous quantity supply node full sync mismatch log table,SQL,V20240405145244__add_column_previous_quantity_unit_of_measure_and_updated_quantity_unit_of_measure_alter_previous_quantity_supply_node_full_sync_mismatch_log_table.sql,-1668274941,giv_inventory_service,2024-04-16 08:47:21.258,28,true
+12,"20240409092949",create fk supply activity log and item log,SQL,V20240409092949__create_fk_supply_activity_log_and_item_log.sql,867008651,giv_inventory_service,2024-04-16 10:57:46.926,29,true
+13,"20240418151200",create inventory summary supply summary table,SQL,V20240418151200__create_inventory_summary_supply_summary_table.sql,-181323282,giv_inventory_service,2024-04-26 07:17:01.961,152,true
+14,"20240510133907",create supply node full sync batch summary,SQL,V20240510133907__create_supply_node_full_sync_batch_summary.sql,-1097720836,giv_inventory_service,2024-05-10 10:47:57.242,60,true
+15,"20240515191957",alter column started at supply node full sync batch summary,SQL,V20240515191957__alter_column_started_at_supply_node_full_sync_batch_summary.sql,-961799437,giv_inventory_service,2024-05-20 08:03:32.784,29,true
+16,"20240523134059",create node lookup table,SQL,V20240523134059__create_node_lookup_table.sql,1547098403,giv_inventory_service,2024-05-23 09:09:00.251,14,true

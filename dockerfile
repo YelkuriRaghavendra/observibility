@@ -13,10 +13,12 @@ RUN pip install --no-cache-dir -r Requirements.txt
 # Copy the rest of the application code into the container
 COPY . .
 
+# Run the preprocess and db_init scripts
+RUN python preprocess.py
+RUN python db_init.py
+
 # Expose the port Streamlit uses
 EXPOSE 8501
 
-
 # Command to run the Streamlit app
 CMD ["streamlit", "run", "Dashboard.py"]
-
